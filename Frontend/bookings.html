@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Luxury Hotel</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        .bookings-container {
+            padding: 2rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .booking-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .booking-header {
+            padding: 1rem;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        .booking-status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-completed {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        .booking-content {
+            padding: 1rem;
+        }
+        .booking-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .booking-info-item {
+            margin-bottom: 0.5rem;
+        }
+        .booking-info-item span {
+            font-weight: 600;
+        }
+        .booking-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #eee;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-view {
+            background-color: #4a90e2;
+            color: white;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d" alt="Hotel Logo" class="logo">
+            <h1>Luxury Hotel</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="dining.html">Dining</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="contact.html">Contact</a>
+            <div class="auth-buttons guest-only">
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="signup.html" class="btn-signup">Sign Up</a>
+            </div>
+            <div class="user-profile user-only" style="display: none;">
+                <span class="user-name">User</span>
+                <i class="fas fa-user-circle"></i>
+                <div class="dropdown" id="userProfileDropdown">
+                    <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="bookings.html" class="active"><i class="fas fa-list"></i> My Bookings</a>
+                    <a href="orders.html"><i class="fas fa-utensils"></i> My Orders</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Bookings Section -->
+    <div class="section-header" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945');">
+        <h1>My Bookings</h1>
+    </div>
+
+    <div class="bookings-container">
+        <div id="bookingsList">
+            <!-- Bookings will be loaded here -->
+            <div class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <h3>Loading your bookings...</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                <p><i class="fas fa-envelope"></i> info@luxuryhotel.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Luxury Street, City, Country</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="dining.html">Dining</a>
+                <a href="amenities.html">Amenities</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Luxury Hotel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Core functionality -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/nav.js"></script>
+
+    <script>
+        // Load user's bookings
+        async function loadUserBookings() {
+            const bookingsList = document.getElementById('bookingsList');
+            
+            try {
+                if (!localStorage.getItem('token')) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                let bookings;
+                // Use window.utils.apiCall if available
+                if (window.utils && window.utils.apiCall) {
+                    bookings = await window.utils.apiCall('bookings/my-bookings', 'GET');
+                } else {
+                    const response = await fetch('http://localhost:5000/api/bookings/my-bookings', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to load bookings');
+                    }
+                    
+                    bookings = await response.json();
+                }
+                
+                if (bookings.length === 0) {
+                    bookingsList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>No Bookings Found</h3>
+                            <p>You haven't made any bookings yet.</p>
+                            <a href="rooms.html" class="btn-primary">Browse Rooms</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                bookingsList.innerHTML = '';
+                
+                bookings.forEach(booking => {
+                    const checkIn = new Date(booking.checkIn);
+                    const checkOut = new Date(booking.checkOut);
+                    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                    
+                    const statusClass = `status-${booking.status.toLowerCase()}`;
+                    
+                    const bookingCard = document.createElement('div');
+                    bookingCard.className = 'booking-card';
+                    bookingCard.innerHTML = `
+                        <div class="booking-header">
+                            <h3>Booking #${booking._id.substring(0, 8)}</h3>
+                            <span class="booking-status ${statusClass}">${booking.status.toUpperCase()}</span>
+                        </div>
+                        <div class="booking-content">
+                            <div class="booking-info">
+                                <div class="booking-info-item">
+                                    <p><span>Room:</span> ${booking.room.name || booking.room.type}</p>
+                                </div>
+                                <div class="booking-info-item">
+                                    <p><span>Check-in:</span> ${new Date(booking.checkIn).toLocaleDateString()}</p>
+                                </div>
+                                <div class="booking-info-item">
+                                    <p><span>Check-out:</span> ${new Date(booking.checkOut).toLocaleDateString()}</p>
+                                </div>
+                                <div class="booking-info-item">
+                                    <p><span>Nights:</span> ${nights}</p>
+                                </div>
+                                <div class="booking-info-item">
+                                    <p><span>Guests:</span> ${booking.guests.adults + (booking.guests.children || 0)}</p>
+                                </div>
+                                <div class="booking-info-item">
+                                    <p><span>Amount:</span> $${booking.totalAmount.toFixed(2)}</p>
+                                </div>
+                                <div class="booking-info-item">
+                                    <p><span>Payment:</span> ${booking.paymentStatus.toUpperCase()}</p>
+                                </div>
+                            </div>
+                            ${booking.specialRequests ? `
+                                <div class="special-requests">
+                                    <p><span>Special Requests:</span></p>
+                                    <p>${booking.specialRequests}</p>
+                                </div>
+                            ` : ''}
+                            <div class="booking-actions">
+                                ${booking.status === 'confirmed' ? `
+                                    <button class="btn-secondary btn-cancel" data-id="${booking._id}">Cancel Booking</button>
+                                ` : ''}
+                                <button class="btn-secondary btn-view" data-id="${booking._id}">View Details</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    bookingsList.appendChild(bookingCard);
+                });
+                
+                // Add event listeners for cancel buttons
+                document.querySelectorAll('.btn-cancel').forEach(button => {
+                    button.addEventListener('click', cancelBooking);
+                });
+                
+                // Add event listeners for view buttons
+                document.querySelectorAll('.btn-view').forEach(button => {
+                    button.addEventListener('click', viewBookingDetails);
+                });
+                
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                bookingsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Error Loading Bookings</h3>
+                        <p>${error.message || 'An error occurred while loading your bookings.'}</p>
+                        <button class="btn-primary" onclick="loadUserBookings()">Try Again</button>
+                    </div>
+                `;
+                
+                if (window.utils && window.utils.showNotification) {
+                    window.utils.showNotification(error.message || 'Failed to load bookings', 'error');
+                }
+            }
+        }
+        
+        // Cancel booking
+        async function cancelBooking(e) {
+            const bookingId = e.target.dataset.id;
+            
+            if (!confirm('Are you sure you want to cancel this booking?')) {
+                return;
+            }
+            
+            try {
+                if (window.utils && window.utils.apiCall) {
+                    await window.utils.apiCall(`bookings/${bookingId}/cancel`, 'PUT');
+                    window.utils.showNotification('Booking cancelled successfully', 'success');
+                } else {
+                    const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/cancel`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to cancel booking');
+                    }
+                    
+                    showNotification('Booking cancelled successfully', 'success');
+                }
+                
+                // Reload bookings
+                loadUserBookings();
+                
+            } catch (error) {
+                console.error('Error cancelling booking:', error);
+                if (window.utils && window.utils.showNotification) {
+                    window.utils.showNotification(error.message || 'Failed to cancel booking', 'error');
+                } else {
+                    showNotification(error.message || 'Failed to cancel booking', 'error');
+                }
+            }
+        }
+        
+        // View booking details (placeholder for now)
+        function viewBookingDetails(e) {
+            const bookingId = e.target.dataset.id;
+            alert(`View details for booking ${bookingId} - Feature coming soon!`);
+            // In the future, this could open a modal with more details or redirect to a detailed page
+        }
+        
+        // Load bookings when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    once: true
+                });
+            }
+            
+            // Load bookings
+            loadUserBookings();
+        });
+    </script>
+</body>
+</html> 

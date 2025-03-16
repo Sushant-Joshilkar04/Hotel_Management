@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Luxury Hotel</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d" alt="Hotel Logo" class="logo">
+            <h1>Luxury Hotel</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="dining.html">Dining</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="contact.html">Contact</a>
+            <div class="auth-buttons guest-only">
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="signup.html" class="btn-signup">Sign Up</a>
+            </div>
+            <div class="user-profile user-only" style="display: none;">
+                <span class="user-name">User</span>
+                <i class="fas fa-user-circle"></i>
+                <div class="dropdown" id="userProfileDropdown">
+                    <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="bookings.html"><i class="fas fa-list"></i> My Bookings</a>
+                    <a href="orders.html" class="active"><i class="fas fa-utensils"></i> My Orders</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- My Orders Section -->
+    <section class="my-orders-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">My Food Orders</h2>
+            <p class="section-description" data-aos="fade-up">View and track your food orders history.</p>
+            
+            <!-- Orders Container -->
+            <div class="orders-container" data-aos="fade-up">
+                <div id="orders-loading" class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Loading your orders...</p>
+                </div>
+                
+                <div id="no-orders-message" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <h3>No Orders Found</h3>
+                        <p>You haven't placed any food orders yet.</p>
+                        <a href="dining.html" class="btn-primary">Explore Our Menu</a>
+                    </div>
+                </div>
+                
+                <div id="orders-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                <p><i class="fas fa-envelope"></i> info@luxuryhotel.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Luxury Street, City, Country</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="dining.html">Dining</a>
+                <a href="amenities.html">Amenities</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Luxury Hotel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Core functionality -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/nav.js"></script>
+    
+    <!-- Orders script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS animation
+            AOS.init();
+            
+            // Fetch and display orders
+            displayOrders();
+        });
+        
+        function displayOrders() {
+            // Show loading
+            document.getElementById('orders-loading').style.display = 'flex';
+            
+            // Get orders from local storage first
+            let localOrders = JSON.parse(localStorage.getItem('myFoodOrders') || '[]');
+            
+            // Get user token
+            const token = sessionStorage.getItem('userToken') || localStorage.getItem('token');
+            
+            if (!token) {
+                // Not logged in, redirect to login
+                window.location.href = 'login.html?redirect=orders.html';
+                return;
+            }
+            
+            // Try to fetch orders from API
+            fetch('http://localhost:5000/api/food/myorders', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (response.ok) return response.json();
+                // If API call fails, use local orders
+                return { orders: [] };
+            })
+            .then(data => {
+                // Combine API orders with local orders
+                const orders = data.orders || [];
+                const allOrders = [...orders, ...localOrders];
+                
+                // Hide loading
+                document.getElementById('orders-loading').style.display = 'none';
+                
+                if (allOrders.length === 0) {
+                    // Show no orders message
+                    document.getElementById('no-orders-message').style.display = 'block';
+                    return;
+                }
+                
+                // Render orders
+                const ordersListElement = document.getElementById('orders-list');
+                ordersListElement.innerHTML = '';
+                
+                allOrders.forEach(order => {
+                    const orderElement = createOrderElement(order);
+                    ordersListElement.appendChild(orderElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error);
+                
+                // Hide loading
+                document.getElementById('orders-loading').style.display = 'none';
+                
+                // If API call fails, use local orders
+                if (localOrders.length === 0) {
+                    // Show no orders message
+                    document.getElementById('no-orders-message').style.display = 'block';
+                    return;
+                }
+                
+                // Render local orders
+                const ordersListElement = document.getElementById('orders-list');
+                ordersListElement.innerHTML = '';
+                
+                localOrders.forEach(order => {
+                    const orderElement = createOrderElement(order);
+                    ordersListElement.appendChild(orderElement);
+                });
+            });
+        }
+        
+        function createOrderElement(order) {
+            const orderDate = new Date(order.orderedAt || Date.now()).toLocaleString();
+            const statusClass = getStatusClass(order.status || 'pending');
+            
+            const orderElement = document.createElement('div');
+            orderElement.className = 'order-card';
+            orderElement.innerHTML = `
+                <div class="order-header">
+                    <h3 class="order-title">${order.foodName}</h3>
+                    <span class="order-status ${statusClass}">${order.status || 'pending'}</span>
+                </div>
+                <div class="order-details">
+                    <p><strong>Quantity:</strong> ${order.quantity}</p>
+                    <p><strong>Ordered:</strong> ${orderDate}</p>
+                    ${order.deliveryTime ? `<p><strong>Delivery Time:</strong> ${new Date(order.deliveryTime).toLocaleString()}</p>` : ''}
+                    ${order.deliveryLocation ? `<p><strong>Delivery Location:</strong> ${order.deliveryLocation}</p>` : ''}
+                    ${order.specialInstructions ? `<p><strong>Special Instructions:</strong> ${order.specialInstructions}</p>` : ''}
+                </div>
+            `;
+            
+            return orderElement;
+        }
+        
+        function getStatusClass(status) {
+            switch(status.toLowerCase()) {
+                case 'delivered':
+                    return 'status-delivered';
+                case 'preparing':
+                    return 'status-preparing';
+                case 'cancelled':
+                    return 'status-cancelled';
+                case 'pending':
+                default:
+                    return 'status-pending';
+            }
+        }
+    </script>
+</body>
+</html> 

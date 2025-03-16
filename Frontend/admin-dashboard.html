@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Luxury Hotel</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-dashboard">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d" alt="Hotel Logo" class="logo">
+            <h1>Luxury Hotel</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="admin-dashboard.html" class="active">Dashboard</a>
+            <div class="user-profile user-only">
+                <span class="user-name">Admin</span>
+                <i class="fas fa-user-circle"></i>
+                <div class="dropdown" id="userProfileDropdown">
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="dashboard-sidebar">
+            <div class="sidebar-menu">
+                <a href="#overview" class="active" data-section="overview">
+                    <i class="fas fa-chart-line"></i> Overview
+                </a>
+                <a href="#rooms" data-section="rooms">
+                    <i class="fas fa-bed"></i> Rooms Management
+                </a>
+                <a href="#food" data-section="food">
+                    <i class="fas fa-utensils"></i> Food Management
+                </a>
+                <a href="#reports" data-section="reports">
+                    <i class="fas fa-file-alt"></i> Reports
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="dashboard-main">
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section active">
+                <h2>Dashboard Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Room Bookings</h3>
+                            <p id="totalBookings">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Food Orders</h3>
+                            <p id="totalOrders">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Revenue</h3>
+                            <p id="totalRevenue">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Monthly Bookings</h3>
+                        <canvas id="bookingsChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Food Orders Trend</h3>
+                        <canvas id="ordersChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rooms Management Section -->
+            <section id="rooms" class="dashboard-section">
+                <h2>Rooms Management</h2>
+                <div class="action-bar">
+                    <button id="addRoomBtn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add New Room
+                    </button>
+                </div>
+                <div class="rooms-grid" id="roomsGrid">
+                    <!-- Rooms will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Food Management Section -->
+            <section id="food" class="dashboard-section">
+                <h2>Food Management</h2>
+                <div class="action-bar">
+                    <button id="addFoodBtn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add New Item
+                    </button>
+                </div>
+                <div class="food-items-grid" id="foodItemsGrid">
+                    <!-- Food items will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="dashboard-section">
+                <h2>Monthly Reports</h2>
+                <div class="reports-controls">
+                    <select id="reportMonth">
+                        <option value="">Select Month</option>
+                    </select>
+                    <select id="reportYear">
+                        <option value="">Select Year</option>
+                    </select>
+                    <button id="generateReport" class="btn-primary">Generate Report</button>
+                </div>
+                <div class="report-container" id="reportContainer">
+                    <!-- Report content will be loaded here -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Add Room Modal -->
+    <div id="addRoomModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Room</h2>
+            <form id="addRoomForm">
+                <div class="form-group">
+                    <label for="roomNumber">Room Number</label>
+                    <input type="text" id="roomNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomType">Room Type</label>
+                    <select id="roomType" required>
+                        <option value="standard">Standard</option>
+                        <option value="deluxe">Deluxe</option>
+                        <option value="suite">Suite</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="roomPrice">Price per Night</label>
+                    <input type="number" id="roomPrice" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomCapacity">Capacity</label>
+                    <input type="number" id="roomCapacity" required>
+                </div>
+                <button type="submit" class="btn-primary">Add Room</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Food Modal -->
+    <div id="addFoodModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Food Item</h2>
+            <form id="addFoodForm">
+                <div class="form-group">
+                    <label for="foodName">Name</label>
+                    <input type="text" id="foodName" required>
+                </div>
+                <div class="form-group">
+                    <label for="foodCategory">Category</label>
+                    <select id="foodCategory" required>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="desserts">Desserts</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="foodPrice">Price</label>
+                    <input type="number" id="foodPrice" required>
+                </div>
+                <div class="form-group">
+                    <label for="foodDescription">Description</label>
+                    <textarea id="foodDescription" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Add Food Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html> 

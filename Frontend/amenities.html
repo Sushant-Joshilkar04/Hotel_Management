@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amenities - Luxury Hotel</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d" alt="Hotel Logo" class="logo">
+            <h1>Luxury Hotel</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="dining.html">Dining</a>
+            <a href="amenities.html" class="active">Amenities</a>
+            <a href="contact.html">Contact</a>
+            <div class="auth-buttons guest-only">
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="signup.html" class="btn-signup">Sign Up</a>
+            </div>
+            <div class="user-profile user-only" style="display: none;">
+                <span class="user-name">User</span>
+                <i class="fas fa-user-circle"></i>
+                <div class="dropdown" id="userProfileDropdown">
+                    <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="bookings.html"><i class="fas fa-list"></i> My Bookings</a>
+                    <a href="orders.html"><i class="fas fa-utensils"></i> My Orders</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945');">
+        <div class="hero-content" data-aos="fade-up">
+            <h1>Luxury Amenities</h1>
+            <p>Experience world-class facilities and services</p>
+        </div>
+    </section>
+
+    <!-- Amenities Grid -->
+    <section class="amenities-grid">
+        <div class="amenity-card" data-aos="fade-up">
+            <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874" alt="Spa">
+            <div class="amenity-content">
+                <h3>Luxury Spa</h3>
+                <p>Indulge in our premium spa treatments and massages</p>
+                <button class="btn-secondary">Learn More</button>
+            </div>
+        </div>
+
+        <div class="amenity-card" data-aos="fade-up" data-aos-delay="100">
+            <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf" alt="Pool">
+            <div class="amenity-content">
+                <h3>Infinity Pool</h3>
+                <p>Enjoy our rooftop infinity pool with panoramic views</p>
+                <button class="btn-secondary">Learn More</button>
+            </div>
+        </div>
+
+        <div class="amenity-card" data-aos="fade-up" data-aos-delay="200">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48" alt="Gym">
+            <div class="amenity-content">
+                <h3>Fitness Center</h3>
+                <p>Stay fit in our state-of-the-art gym facility</p>
+                <button class="btn-secondary">Learn More</button>
+            </div>
+        </div>
+
+        <div class="amenity-card" data-aos="fade-up" data-aos-delay="300">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4" alt="Restaurant">
+            <div class="amenity-content">
+                <h3>Fine Dining</h3>
+                <p>Savor exquisite cuisine in our signature restaurant</p>
+                <button class="btn-secondary">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                <p><i class="fas fa-envelope"></i> info@luxuryhotel.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Luxury Street, City, Country</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="dining.html">Dining</a>
+                <a href="amenities.html">Amenities</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Luxury Hotel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Core functionality -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/nav.js"></script>
+</body>
+</html> 

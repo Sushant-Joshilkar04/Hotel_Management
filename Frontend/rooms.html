@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms - Luxury Hotel</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d" alt="Hotel Logo" class="logo">
+            <h1>Luxury Hotel</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="rooms.html" class="active">Rooms</a>
+            <a href="dining.html">Dining</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="contact.html">Contact</a>
+            <div class="auth-buttons guest-only">
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="signup.html" class="btn-signup">Sign Up</a>
+            </div>
+            <div class="user-profile user-only" style="display: none;">
+                <span class="user-name">User</span>
+                <i class="fas fa-user-circle"></i>
+                <div class="dropdown" id="userProfileDropdown">
+                    <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="bookings.html"><i class="fas fa-list"></i> My Bookings</a>
+                    <a href="orders.html"><i class="fas fa-utensils"></i> My Orders</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Rooms Hero -->
+    <div class="room-hero" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1566665797739-1674de7a421a');">
+        <div class="hero-content">
+            <h1>Our Rooms</h1>
+            <p>Experience luxury and comfort in our exquisite accommodations</p>
+        </div>
+    </div>
+
+    <!-- Room Filter -->
+    <section class="room-filter">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label for="checkInDate">Check-in Date</label>
+                <input type="date" id="checkInDate" min="" required>
+            </div>
+            <div class="filter-group">
+                <label for="checkOutDate">Check-out Date</label>
+                <input type="date" id="checkOutDate" min="" required>
+            </div>
+            <div class="filter-group">
+                <label for="roomType">Room Type</label>
+                <select id="roomType">
+                    <option value="">All Types</option>
+                    <option value="Deluxe">Deluxe</option>
+                    <option value="Suite">Suite</option>
+                    <option value="Presidential">Presidential</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="guests">Guests</label>
+                <select id="guests">
+                    <option value="1">1 Guest</option>
+                    <option value="2" selected>2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                    <option value="5">5 Guests</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button id="searchRooms" class="btn-primary">Search Rooms</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rooms Grid -->
+    <section class="rooms-container">
+        <div id="roomsGrid" class="room-grid">
+            <!-- Rooms will be loaded here -->
+            <div class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <h3>Loading rooms...</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                <p><i class="fas fa-envelope"></i> info@luxuryhotel.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Luxury Street, City, Country</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="dining.html">Dining</a>
+                <a href="amenities.html">Amenities</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Luxury Hotel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/booking.js"></script>
+
+    <script>
+        // Initialize date inputs with today and tomorrow
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const checkInDateInput = document.getElementById('checkInDate');
+        const checkOutDateInput = document.getElementById('checkOutDate');
+        
+        // Format dates for input
+        const formatDateForInput = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+        
+        // Set min dates and default values
+        checkInDateInput.min = formatDateForInput(today);
+        checkInDateInput.value = formatDateForInput(today);
+        
+        checkOutDateInput.min = formatDateForInput(tomorrow);
+        checkOutDateInput.value = formatDateForInput(tomorrow);
+        
+        // Update checkout min date when checkin changes
+        checkInDateInput.addEventListener('change', () => {
+            const selectedDate = new Date(checkInDateInput.value);
+            const nextDay = new Date(selectedDate);
+            nextDay.setDate(nextDay.getDate() + 1);
+            
+            checkOutDateInput.min = formatDateForInput(nextDay);
+            
+            // If current checkout date is before new min date, update it
+            if (new Date(checkOutDateInput.value) <= selectedDate) {
+                checkOutDateInput.value = formatDateForInput(nextDay);
+            }
+        });
+        
+        // Load rooms function
+        async function loadRooms(filters = {}) {
+            const roomsGrid = document.getElementById('roomsGrid');
+            roomsGrid.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><h3>Loading rooms...</h3></div>';
+            
+            try {
+                // Build query string from filters
+                const queryParams = new URLSearchParams();
+                if (filters.type) queryParams.append('type', filters.type);
+                if (filters.capacity) queryParams.append('capacity', filters.capacity);
+                if (filters.checkIn) queryParams.append('checkIn', filters.checkIn);
+                if (filters.checkOut) queryParams.append('checkOut', filters.checkOut);
+                
+                const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+                
+                // Fetch rooms
+                let rooms;
+                if (window.utils && window.utils.apiCall) {
+                    rooms = await window.utils.apiCall(`rooms${queryString}`, 'GET', null, false);
+                } else {
+                    const response = await fetch(`http://localhost:5000/api/rooms${queryString}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to load rooms');
+                    }
+                    rooms = await response.json();
+                }
+                
+                if (rooms.length === 0) {
+                    roomsGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-bed"></i>
+                            <h3>No Rooms Available</h3>
+                            <p>Try different dates or filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                roomsGrid.innerHTML = '';
+                
+                rooms.forEach(room => {
+                    const roomCard = document.createElement('div');
+                    roomCard.className = 'room-card';
+                    roomCard.dataset.id = room._id;
+                    
+                    // Use first image or placeholder
+                    const imageUrl = room.images && room.images.length > 0 
+                        ? room.images[0] 
+                        : `https://source.unsplash.com/random/600x400/?${room.type.toLowerCase()}-room`;
+                    
+                    // Create star rating based on average
+                    const stars = Array(5).fill().map((_, index) => {
+                        if (index < Math.floor(room.averageRating)) {
+                            return '<i class="fas fa-star"></i>';
+                        } else if (index < Math.floor(room.averageRating) + 0.5) {
+                            return '<i class="fas fa-star-half-alt"></i>';
+                        } else {
+                            return '<i class="far fa-star"></i>';
+                        }
+                    }).join('');
+                    
+                    roomCard.innerHTML = `
+                        <img src="${imageUrl}" alt="${room.name}">
+                        <div class="room-info">
+                            <div class="room-type">
+                                <span class="badge">${room.type}</span>
+                                <span class="badge">${room.capacity} Guests</span>
+                            </div>
+                            <h3>${room.name}</h3>
+                            <div class="room-rating">
+                                ${stars}
+                                <span>(${room.reviews ? room.reviews.length : 0} reviews)</span>
+                            </div>
+                            <p>${room.description}</p>
+                            <div class="room-amenities">
+                                ${room.amenities.map(amenity => `<span><i class="fas fa-check"></i> ${amenity}</span>`).join('')}
+                            </div>
+                            <div class="room-price">
+                                <span>$${room.price} / night</span>
+                                <button class="btn-book btn-primary" data-id="${room._id}">Book Now</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    roomsGrid.appendChild(roomCard);
+                });
+                
+                // Add event listeners to Book buttons
+                document.querySelectorAll('.btn-book').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const roomId = this.dataset.id;
+                        handleBooking(roomId);
+                    });
+                });
+                
+                // Initialize AOS animations on new elements
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+                
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+                roomsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Error Loading Rooms</h3>
+                        <p>${error.message || 'An error occurred while loading rooms.'}</p>
+                        <button class="btn-primary" onclick="loadRooms()">Try Again</button>
+                    </div>
+                `;
+                
+                if (window.utils && window.utils.showNotification) {
+                    window.utils.showNotification(error.message || 'Failed to load rooms', 'error');
+                }
+            }
+        }
+        
+        // Search button handler
+        document.getElementById('searchRooms').addEventListener('click', () => {
+            const filters = {
+                type: document.getElementById('roomType').value,
+                capacity: parseInt(document.getElementById('guests').value),
+                checkIn: document.getElementById('checkInDate').value,
+                checkOut: document.getElementById('checkOutDate').value
+            };
+            
+            loadRooms(filters);
+        });
+        
+        // Load rooms on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    once: true
+                });
+            }
+            
+            // Load all rooms initially
+            loadRooms();
+        });
+    </script>
+</body>
+</html> 

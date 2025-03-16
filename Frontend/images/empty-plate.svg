@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Empty Plate</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="plateGradient">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#F0F0F0" offset="100%"></stop>
+        </linearGradient>
+        <filter x="-12.5%" y="-12.5%" width="125.0%" height="125.0%" filterUnits="objectBoundingBox" id="shadow">
+            <feGaussianBlur stdDeviation="5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="2" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Plate Shadows -->
+        <ellipse id="shadow-outer" fill="#E0E0E0" cx="100" cy="130" rx="70" ry="15"></ellipse>
+        
+        <!-- Plate Base -->
+        <circle id="plate-outer" fill="url(#plateGradient)" filter="url(#shadow)" cx="100" cy="100" r="80"></circle>
+        <circle id="plate-inner" stroke="#E0E0E0" stroke-width="1" fill="#FFFFFF" cx="100" cy="100" r="65"></circle>
+        <circle id="plate-center" stroke="#EEEEEE" stroke-width="1" fill="#FFFFFF" cx="100" cy="100" r="45"></circle>
+        
+        <!-- Utensils -->
+        <path d="M65,70 C65,70 70,95 65,120" id="fork-handle" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"></path>
+        <path d="M135,70 C135,70 130,95 135,120" id="knife-handle" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"></path>
+        
+        <!-- Decorative Elements -->
+        <circle id="decorative-dot1" fill="#EEEEEE" cx="70" cy="75" r="2"></circle>
+        <circle id="decorative-dot2" fill="#EEEEEE" cx="130" cy="75" r="2"></circle>
+        <circle id="decorative-dot3" fill="#EEEEEE" cx="70" cy="125" r="2"></circle>
+        <circle id="decorative-dot4" fill="#EEEEEE" cx="130" cy="125" r="2"></circle>
+        
+        <!-- Plate Rim Highlight -->
+ 

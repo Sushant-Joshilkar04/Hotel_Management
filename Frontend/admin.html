@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management - Admin Panel</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-panel">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="images/logo.png" alt="Hotel Logo" class="logo">
+            <h2>Admin Panel</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="active">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </a>
+            <a href="#bookings">
+                <i class="fas fa-calendar-check"></i>
+                Bookings
+            </a>
+            <a href="#rooms">
+                <i class="fas fa-bed"></i>
+                Rooms
+            </a>
+            <a href="#food-orders">
+                <i class="fas fa-utensils"></i>
+                Food Orders
+            </a>
+            <a href="#users">
+                <i class="fas fa-users"></i>
+                Users
+            </a>
+            <a href="#menu">
+                <i class="fas fa-clipboard-list"></i>
+                Menu Management
+            </a>
+            <a href="#settings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="admin-header">
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="admin-profile">
+                <span class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </span>
+                <img src="images/admin-avatar.jpg" alt="Admin" class="avatar">
+                <span class="admin-name">Admin Name</span>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="dashboard-section">
+            <h2>Dashboard Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-bed"></i>
+                    <div class="stat-info">
+                        <h3>Total Rooms</h3>
+                        <p class="stat-number">50</p>
+                        <p class="stat-detail">35 Occupied</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-info">
+                        <h3>Active Guests</h3>
+                        <p class="stat-number">87</p>
+                        <p class="stat-detail">12 New Today</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-utensils"></i>
+                    <div class="stat-info">
+                        <h3>Food Orders</h3>
+                        <p class="stat-number">24</p>
+                        <p class="stat-detail">8 Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="stat-info">
+                        <h3>Total Bookings</h3>
+                        <p class="stat-number">120</p>
+                        <p class="stat-detail">Today</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Occupancy Rate</h3>
+                    <canvas id="occupancyChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Bookings Overview</h3>
+                    <canvas id="bookingsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-list">
+                    <!-- Activity items will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/admin/dashboard.js"></script>
+    <script src="js/admin/bookings.js"></script>
+    <script src="js/admin/rooms.js"></script>
+    <script src="js/admin/food.js"></script>
+    <script src="js/admin/users.js"></script>
+</body>
+</html> 

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    
+    <div>
+        <h2>Backend Health Check</h2>
+        <button id="healthCheckBtn">Test Backend Connection</button>
+        <div id="healthResult"></div>
+    </div>
+    
+    <div>
+        <h2>Registration Test</h2>
+        <button id="registrationBtn">Test Registration API</button>
+        <div id="registrationResult"></div>
+    </div>
+    
+    <script>
+        // Health check test
+        document.getElementById('healthCheckBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('healthResult');
+            resultDiv.innerHTML = '<p>Testing connection...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/health');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Connection successful!</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Connection failed!</p>
+                    <pre>${error.message}</pre>
+                    <p>Make sure the backend server is running on port 5000.</p>
+                `;
+            }
+        });
+        
+        // Registration test
+        document.getElementById('registrationBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('registrationResult');
+            resultDiv.innerHTML = '<p>Testing registration API...</p>';
+            
+            try {
+                // Create test user with random email to avoid duplicates
+                const testUser = {
+                    name: 'Test User',
+                    email: `test${Date.now()}@example.com`,
+                    password: 'password123',
+                    role: 'guest'
+                };
+                
+                console.log('Sending test user data:', testUser);
+                
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testUser)
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ Registration API working!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <p class="error">❌ Registration failed with status ${response.status}</p>
+                        <pre>${errorText}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Registration request failed!</p>
+                    <pre>${error.message}</pre>
+                    <p>Make sure the backend server is running and routes are correctly configured.</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

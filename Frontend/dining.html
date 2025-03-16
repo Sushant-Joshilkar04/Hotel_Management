@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dining Experience - Luxury Hotel</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d" alt="Hotel Logo" class="logo">
+            <h1>Luxury Hotel</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="dining.html" class="active">Dining</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="contact.html">Contact</a>
+            <div class="auth-buttons guest-only">
+                <a href="login.html" class="btn-login">Login</a>
+                <a href="signup.html" class="btn-signup">Sign Up</a>
+            </div>
+            <div class="user-profile user-only" style="display: none;">
+                <span class="user-name">User</span>
+                <i class="fas fa-user-circle"></i>
+                <div class="dropdown" id="userProfileDropdown">
+                    <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="bookings.html"><i class="fas fa-list"></i> My Bookings</a>
+                    <a href="orders.html"><i class="fas fa-utensils"></i> My Orders</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="background-image: url('https://images.unsplash.com/photo-1544148103-0773bf10d330');">
+        <div class="hero-content" data-aos="fade-up">
+            <h1>Fine Dining Experience</h1>
+            <p>Culinary excellence in a luxurious setting</p>
+        </div>
+    </section>
+
+    <!-- Food Menu Section -->
+    <section id="food-menu-section" class="section">
+        <div class="section-container">
+            <h2 class="section-title" data-aos="fade-up">Our Delicious Menu</h2>
+            
+            <!-- Category Filter -->
+            <div class="category-selector">
+                <p class="category-heading">Explore our diverse selection of dishes crafted with care by our expert chefs.</p>
+                <button class="food-category-btn active" data-category="all">All</button>
+                <button class="food-category-btn" data-category="breakfast">Breakfast</button>
+                <button class="food-category-btn" data-category="lunch">Lunch</button>
+                <button class="food-category-btn" data-category="dinner">Dinner</button>
+                <button class="food-category-btn" data-category="desserts">Desserts</button>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="loading-indicator">
+                <div class="spinner"></div>
+                <p>Loading delicious meals...</p>
+            </div>
+            
+            <!-- Food Menu Container -->
+            <div class="food-menu-container">
+                <!-- Skeleton Loaders will be displayed while loading -->
+                <div id="skeleton-container" class="food-items-grid">
+                    <div class="skeleton-loader"></div>
+                    <div class="skeleton-loader"></div>
+                    <div class="skeleton-loader"></div>
+                    <div class="skeleton-loader"></div>
+                    <div class="skeleton-loader"></div>
+                    <div class="skeleton-loader"></div>
+                </div>
+                
+                <!-- Food Items Grid will be populated by JavaScript -->
+                <div id="food-items-grid" class="food-items-grid"></div>
+                
+                <!-- No Results Message -->
+                <div id="no-food-items-message" class="no-results-message" style="display: none;">
+                    <i class="fas fa-utensils fa-4x" style="color: #e0e0e0; margin-bottom: 15px;"></i>
+                    <h3>No menu items found</h3>
+                    <p>Try selecting a different category or check back later for new additions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Food Management Section - Only visible to admins -->
+    <section id="adminFoodSection" class="admin-food-section admin-only" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Food Item Management</h2>
+            <form id="addFoodForm" class="add-food-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="foodName">Food Name</label>
+                        <input type="text" id="foodName" required placeholder="e.g. Classic Pancakes">
+                    </div>
+                    <div class="form-group">
+                        <label for="foodCategory">Category</label>
+                        <select id="foodCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Desserts">Desserts</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="foodPrice">Price ($)</label>
+                        <input type="number" id="foodPrice" required min="0" step="0.01" placeholder="e.g. 12.99">
+                    </div>
+                    <div class="form-group">
+                        <label for="foodVeg">Vegetarian</label>
+                        <select id="foodVeg" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="foodDescription">Description</label>
+                    <textarea id="foodDescription" required rows="3" placeholder="Describe the food item..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="foodImage">Image URL (from web)</label>
+                    <input type="url" id="foodImage" required placeholder="https://example.com/image.jpg">
+                    <small class="form-text">Enter a URL of an image from the web (e.g., Unsplash)</small>
+                </div>
+                <div class="form-group image-preview-container" style="display: none;">
+                    <label>Image Preview</label>
+                    <div class="image-preview">
+                        <img id="imagePreview" src="" alt="Image preview">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn-primary">Add Food Item</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Order Modal -->
+    <div id="food-order-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Order Food</h2>
+            <div class="modal-body">
+                <div id="food-order-details" class="food-order-details">
+                    <div class="food-modal-image-container">
+                        <img id="food-modal-image" src="" alt="Food Image">
+                    </div>
+                    <div class="food-modal-info">
+                        <h3 id="food-modal-name"></h3>
+                        <p id="food-modal-description"></p>
+                        <div class="food-modal-badge" id="food-modal-badge"></div>
+                        <p class="food-modal-price">Price: <span id="food-modal-price"></span></p>
+                    </div>
+                </div>
+                <form id="food-order-form">
+                    <input type="hidden" id="food-id-input">
+                    <div class="form-group">
+                        <label for="quantity-input">Quantity:</label>
+                        <input type="number" id="quantity-input" min="1" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="special-instructions">Special Instructions:</label>
+                        <textarea id="special-instructions" rows="3" placeholder="Any specific preparation instructions or allergies..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="delivery-time">Preferred Delivery Time:</label>
+                        <input type="datetime-local" id="delivery-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="delivery-location">Delivery Location:</label>
+                        <select id="delivery-location" required>
+                            <option value="">Select location...</option>
+                            <option value="room">My Room</option>
+                            <option value="restaurant">Hotel Restaurant</option>
+                            <option value="poolside">Poolside</option>
+                            <option value="lobby">Hotel Lobby</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">Confirm Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+                <p><i class="fas fa-envelope"></i> info@luxuryhotel.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Luxury Street, City, Country</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="dining.html">Dining</a>
+                <a href="amenities.html">Amenities</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Luxury Hotel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Core functionality -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/nav.js"></script>
+    <!-- Sample Food Data -->
+    <script src="js/sampleFoodData.js"></script>
+    <script src="js/dining.js"></script>
+</body>
+</html> 
