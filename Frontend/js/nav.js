@@ -46,48 +46,35 @@ function updateUserInfo() {
     const userToken = sessionStorage.getItem('userToken') || localStorage.getItem('token');
     const userData = JSON.parse(sessionStorage.getItem('userData') || localStorage.getItem('userData') || '{}');
     
-    const guestElements = document.querySelectorAll('.guest-only');
-    const userElements = document.querySelectorAll('.user-only');
+    const userProfile = document.querySelector('.user-profile');
     const userNameElements = document.querySelectorAll('.user-name');
     const dropdown = document.getElementById('userProfileDropdown');
     
-    if (userToken) {
-        // User is logged in
-        document.body.classList.add('logged-in');
-        document.body.classList.remove('logged-out');
+    if (userToken && userData) {
+        // Update user name in navbar
+        userNameElements.forEach(el => el.textContent = userData.name || 'User');
         
-        // Show user elements, hide guest elements
-        guestElements.forEach(el => el.style.display = 'none');
-        userElements.forEach(el => el.style.display = 'flex');
-        
-        // Update user name and show appropriate menu items
-        const displayName = userData.name || userData.email || 'User';
-        userNameElements.forEach(el => el.textContent = displayName);
-        
-        // Update dropdown menu items based on user role
+        // Update dropdown profile info
         if (dropdown) {
-            dropdown.innerHTML = `
-                <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
-                <a href="bookings.html"><i class="fas fa-list"></i> My Bookings</a>
-                <a href="orders.html"><i class="fas fa-utensils"></i> My Orders</a>
-                ${userData.role === 'admin' ? `<a href="admin-dashboard.html"><i class="fas fa-cog"></i> Admin Dashboard</a>` : ''}
-                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            `;
+            const fullName = dropdown.querySelector('.user-full-name');
+            const email = dropdown.querySelector('.user-email');
+            if (fullName) fullName.textContent = userData.name || 'User';
+            if (email) email.textContent = userData.email || '';
+        }
+        
+        // Show user profile
+        if (userProfile) {
+            userProfile.style.display = 'block';
             
-            // Add event listener to new logout button
-            const logoutBtn = dropdown.querySelector('#logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', logout);
+            // Setup dropdown toggle
+            const trigger = userProfile.querySelector('.profile-trigger');
+            if (trigger && dropdown) {
+                trigger.onclick = (e) => {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                };
             }
         }
-    } else {
-        // User is not logged in
-        document.body.classList.add('logged-out');
-        document.body.classList.remove('logged-in');
-        
-        // Show guest elements, hide user elements
-        guestElements.forEach(el => el.style.display = 'flex');
-        userElements.forEach(el => el.style.display = 'none');
     }
 }
 
@@ -156,4 +143,14 @@ navLinksArray.forEach(link => {
     if (link.getAttribute('href') === currentPage) {
         link.classList.add('active');
     }
-}); 
+});
+
+// Add click outside listener to close dropdown
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('userProfileDropdown');
+    const userProfile = document.querySelector('.user-profile');
+    
+    if (dropdown && userProfile && !userProfile.contains(e.target)) {
+        dropdown.classList.remove('show');
+    }
+});

@@ -31,14 +31,23 @@
                 <a href="signup.html" class="btn-signup">Sign Up</a>
             </div>
             <div class="user-profile user-only" style="display: none;">
-                <span class="user-name">User</span>
-                <i class="fas fa-user-circle"></i>
+                <div class="profile-trigger">
+                    <span class="user-name">User</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
                 <div class="dropdown" id="userProfileDropdown">
-                    <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
-                    <a href="bookings.html"><i class="fas fa-list"></i> My Bookings</a>
+                    <div class="profile-header">
+                        <span class="user-full-name"></span>
+                        <span class="user-email"></span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <!-- <a href="profile.html"><i class="fas fa-user"></i> My Profile</a> -->
+                    <a href="bookings.html"><i class="fas fa-bed"></i> My Bookings</a>
                     <a href="orders.html"><i class="fas fa-utensils"></i> My Orders</a>
+                    <div class="dropdown-divider"></div>
                     <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
+            </div>
             </div>
         </div>
         <div class="menu-toggle">

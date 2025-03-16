@@ -34,6 +34,7 @@ app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/food', require('./routes/food'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/contact', require('./routes/contact'));  // Make sure this file exists
 
 // Error handling middleware
 app.use((err, req, res, next) => {

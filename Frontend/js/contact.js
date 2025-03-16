@@ -4,6 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showNotification('Please login to send a message', 'error');
+            setTimeout(() => {
+                window.location.href = '/login.html';
+            }, 2000);
+            return;
+        }
+
         // Get form data
         const formData = {
             name: document.getElementById('name').value,
@@ -16,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('http://localhost:5000/api/contact', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData)
             });
@@ -27,13 +38,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification('Message sent successfully!', 'success');
                 contactForm.reset();
             } else {
-                showNotification(data.message || 'Failed to send message', 'error');
+                if (response.status === 401) {
+                    showNotification('Please login again to send a message', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 2000);
+                } else {
+                    showNotification(data.message || 'Failed to send message', 'error');
+                }
             }
         } catch (error) {
             console.error('Error sending message:', error);
             showNotification('An error occurred while sending the message', 'error');
         }
     });
+
+    // Pre-fill form if user is logged in
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (userData.name && userData.email) {
+        document.getElementById('name').value = userData.name;
+        document.getElementById('email').value = userData.email;
+    }
 
     // Notification system
     const showNotification = (message, type = 'info') => {
@@ -48,4 +73,4 @@ document.addEventListener('DOMContentLoaded', () => {
             notification.remove();
         }, 3000);
     };
-}); 
+});
