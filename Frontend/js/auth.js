@@ -106,6 +106,8 @@ const updateNavigation = (role) => {
 
 // Handle Login
 async function handleLogin(email, password, loginType = 'guest') {
+    console.log(email, password, loginType);
+    
     try {
         const response = await fetch('http://localhost:5000/api/auth/login', {
             method: 'POST',
@@ -120,10 +122,14 @@ async function handleLogin(email, password, loginType = 'guest') {
         if (!response.ok) {
             throw new Error(data.message || 'Login failed');
         }
+        console.log('Login successful:', data);
 
         // Store auth data
         sessionStorage.setItem('userToken', data.token);
         sessionStorage.setItem('userData', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
         
         // Show success message
         showNotification('Login successful!', 'success');
@@ -139,6 +145,28 @@ async function handleLogin(email, password, loginType = 'guest') {
         console.error('Login error:', error);
         showNotification(error.message || 'Login failed', 'error');
     }
+}
+
+// Add login form event handler
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        // Get login type (guest or admin)
+        let loginType = 'guest';
+        const adminLoginRadio = document.getElementById('adminLogin');
+        if (adminLoginRadio && adminLoginRadio.checked) {
+            loginType = 'admin';
+        }
+        
+        console.log('Login attempt:', email, password, loginType);
+        
+        // Call the handleLogin function with the form values
+        await handleLogin(email, password, loginType);
+    });
 }
 
 // Handle Signup

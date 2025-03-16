@@ -383,6 +383,14 @@ document.getElementById('food-order-form').addEventListener('submit', function(e
         orderedAt: new Date().toISOString()
     };
     
+    // Get price from modal
+    const priceText = document.getElementById('food-modal-price').textContent;
+    const price = parseFloat(priceText.replace('$', '')) || 0;
+    const totalAmount = price * parseInt(quantity);
+
+    // Add totalAmount to the order data
+    orderData.totalAmount = totalAmount;
+    
     // Submit order to API
     submitFoodOrder(orderData);
 });
@@ -392,6 +400,7 @@ async function submitFoodOrder(orderData) {
     try {
         // Get authentication token
         const token = sessionStorage.getItem('userToken') || localStorage.getItem('token');
+        console.log('Token:', token);
         
         if (!token) {
             showNotification('You must be logged in to place an order', 'error');
@@ -415,8 +424,6 @@ async function submitFoodOrder(orderData) {
         }
         
         console.log('Submitting order to backend:', orderData);
-        
-        // Show loading state
         showNotification('Processing your order...', 'info');
         
         // Send the order to the backend with the correct server URL/port

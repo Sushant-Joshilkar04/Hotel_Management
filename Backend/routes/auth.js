@@ -52,7 +52,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password, loginType } = req.body;
-
+        console.log('Login attempt:', email, password, loginType);  
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
@@ -78,10 +78,10 @@ router.post('/login', async (req, res) => {
         user.lastLogin = new Date();
         await user.save();
 
-        // Create JWT token
+        // Create JWT token with fallback secret
         const token = jwt.sign(
             { id: user._id, role: user.role },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || 'your-secret-key', // Add fallback secret
             { expiresIn: '24h' }
         );
 
