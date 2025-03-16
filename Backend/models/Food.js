@@ -28,7 +28,7 @@ const foodSchema = new mongoose.Schema({
         default: false
     },
     preparationTime: {
-        type: Number, // in minutes
+        type: Number, 
         default: 20
     },
     isAvailable: {

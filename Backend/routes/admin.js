@@ -198,65 +198,59 @@ router.get('/dashboard-stats', auth, adminOnly, async (req, res) => {
     }
 });
 
-// Get monthly report
-router.get('/reports/:year/:month', auth, adminOnly, async (req, res) => {
+// Get all rooms route
+router.get('/rooms', auth, adminOnly, async (req, res) => {
     try {
-        const { year, month } = req.params;
-        const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 0);
-        
-        // Get bookings for the month
-        const bookings = await Booking.find({
-            checkIn: { $gte: startDate, $lte: endDate }
-        });
-        
-        // Get food orders for the month
-        const orders = await FoodOrder.find({
-            orderedAt: { $gte: startDate, $lte: endDate }
-        });
-        
-        // Calculate statistics
-        const totalBookings = bookings.length;
-        const totalOrders = orders.length;
-        const bookingsRevenue = bookings.reduce((sum, booking) => sum + booking.totalPrice, 0);
-        const ordersRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-        
-        res.json({
-            totalBookings,
-            totalOrders,
-            totalRevenue: bookingsRevenue + ordersRevenue,
-            bookings,
-            orders
-        });
+        const rooms = await Room.find({}).sort({ number: 1 });
+        res.json(rooms);
     } catch (error) {
-        console.error('Error generating monthly report:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error fetching rooms:', error);
+        res.status(500).json({ message: 'Error fetching rooms' });
     }
 });
 
 // Add new room
 router.post('/rooms', auth, adminOnly, async (req, res) => {
     try {
-        const { roomNumber, type, price, capacity } = req.body;
+        const { number, type, name, description, price, capacity, floor, amenities, images, status } = req.body;
         
+        // Validate required fields
+        if (!number || !type || !name || !price || !capacity || !floor) {
+            return res.status(400).json({ 
+                message: 'Please provide all required fields: number, type, name, price, capacity, floor' 
+            });
+        }
+
         // Check if room number already exists
-        const existingRoom = await Room.findOne({ roomNumber });
+        const existingRoom = await Room.findOne({ number });
         if (existingRoom) {
             return res.status(400).json({ message: 'Room number already exists' });
         }
-        
+
+        // Create new room matching the Room model schema
         const room = new Room({
-            roomNumber,
+            number,
             type,
+            name,
+            description,
             price,
-            capacity
+            capacity,
+            floor,
+            amenities: amenities || [],
+            images: images || [],
+            status: status || 'AVAILABLE'
         });
-        
+
         await room.save();
-        res.status(201).json(room);
+        res.status(201).json({ 
+            message: 'Room added successfully',
+            room 
+        });
     } catch (error) {
         console.error('Error adding room:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ 
+            message: error.message || 'Error adding room'
+        });
     }
 });
 
@@ -272,7 +266,7 @@ router.post('/food', auth, adminOnly, async (req, res) => {
             description
         });
         
-        await food.save();
+        await foods.save();
         res.status(201).json(food);
     } catch (error) {
         console.error('Error adding food item:', error);

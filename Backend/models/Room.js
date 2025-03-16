@@ -8,31 +8,34 @@ const roomSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['Deluxe', 'Suite', 'Presidential'],
-        required: true
+        required: true,
+        enum: ['Deluxe', 'Suite', 'Presidential']
     },
     name: {
         type: String,
-        required: true
-    },
-    price: {
-        type: Number,
         required: true
     },
     description: {
         type: String,
         required: true
     },
+    price: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    capacity: {
+        type: Number,
+        required: true,
+        min: 1
+    },
     amenities: [{
         type: String
     }],
     images: [{
-        type: String
-    }],
-    capacity: {
-        type: Number,
+        type: String,
         required: true
-    },
+    }],
     status: {
         type: String,
         enum: ['AVAILABLE', 'BOOKED', 'MAINTENANCE'],
@@ -40,38 +43,10 @@ const roomSchema = new mongoose.Schema({
     },
     floor: {
         type: Number,
-        required: true,
-        default: 1
-    },
-    reviews: [{
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        },
-        rating: {
-            type: Number,
-            required: true,
-            min: 1,
-            max: 5
-        },
-        comment: String,
-        date: {
-            type: Date,
-            default: Date.now
-        }
-    }],
-    averageRating: {
-        type: Number,
-        default: 0
+        required: true
     }
+}, {
+    timestamps: true
 });
 
-// Calculate average rating before saving
-roomSchema.pre('save', function(next) {
-    if (this.reviews.length > 0) {
-        this.averageRating = this.reviews.reduce((acc, review) => acc + review.rating, 0) / this.reviews.length;
-    }
-    next();
-});
-
-module.exports = mongoose.model('Room', roomSchema); 
+module.exports = mongoose.model('Room', roomSchema);

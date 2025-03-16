@@ -7,231 +7,192 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/admin-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="admin-dashboard">
+<body style="margin: 0; font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%); min-height: 100vh;">
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-brand">
-            <img src="assets/images/logo.png" alt="Hotel Logo" class="logo">
-            <h1>Luxury Hotel</h1>
+    <nav style="background: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <img src="assets/images/logo.png" alt="Hotel Logo" style="height: 40px; border-radius: 8px;">
+            <h1 style="margin: 0; color: #2c3e50; font-size: 1.5rem;">Luxury Hotel</h1>
         </div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="admin-dashboard.html" class="active">Dashboard</a>
-            <div class="user-profile">
-                <span class="user-name">Admin</span>
-                <i class="fas fa-user-circle"></i>
-                <div class="dropdown">
-                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <a href="index.html" style="text-decoration: none; color: #2c3e50; transition: color 0.3s;">Home</a>
+            <a href="admin-dashboard.html" style="text-decoration: none; color: #3498db; font-weight: 500;">Dashboard</a>
+            <div style="position: relative; cursor: pointer;">
+                <span style="color: #2c3e50; margin-right: 0.5rem;">Admin</span>
+                <i class="fas fa-user-circle" style="color: #3498db; font-size: 1.2rem;"></i>
             </div>
         </div>
     </nav>
 
     <!-- Dashboard Content -->
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="dashboard-sidebar">
-            <div class="sidebar-menu">
-                <a href="#overview" class="active" data-section="overview">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Overview</span>
-                </a>
-                <a href="#rooms" data-section="rooms">
-                    <i class="fas fa-bed"></i>
-                    <span>Rooms</span>
-                </a>
-                <a href="#food" data-section="food">
-                    <i class="fas fa-utensils"></i>
-                    <span>Food Menu</span>
-                </a>
-                <a href="#bookings" data-section="bookings">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Bookings</span>
-                </a>
-                <a href="#orders" data-section="orders">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Food Orders</span>
-                </a>
+    <div style="margin-top: 80px; padding: 2rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
+        <!-- Stats Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div style="background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <i class="fas fa-bed" style="font-size: 2.5rem; color: #3498db; background: rgba(52, 152, 219, 0.1); padding: 1rem; border-radius: 10px;"></i>
+                <div>
+                    <h3 id="totalBookings" style="margin: 0; font-size: 1.8rem; color: #2c3e50;">0</h3>
+                    <p style="margin: 0.3rem 0 0; color: #7f8c8d;">Total Bookings</p>
+                </div>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <i class="fas fa-utensils" style="font-size: 2.5rem; color: #e67e22; background: rgba(230, 126, 34, 0.1); padding: 1rem; border-radius: 10px;"></i>
+                <div>
+                    <h3 id="totalOrders" style="margin: 0; font-size: 1.8rem; color: #2c3e50;">0</h3>
+                    <p style="margin: 0.3rem 0 0; color: #7f8c8d;">Food Orders</p>
+                </div>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem; transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <i class="fas fa-dollar-sign" style="font-size: 2.5rem; color: #27ae60; background: rgba(39, 174, 96, 0.1); padding: 1rem; border-radius: 10px;"></i>
+                <div>
+                    <h3 id="totalRevenue" style="margin: 0; font-size: 1.8rem; color: #2c3e50;">$0</h3>
+                    <p style="margin: 0.3rem 0 0; color: #7f8c8d;">Total Revenue</p>
+                </div>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="dashboard-main">
-            <!-- Overview Section -->
-            <section id="overview" class="dashboard-section active">
-                <h2>Dashboard Overview</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-bed"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Room Bookings</h3>
-                            <p id="totalBookings">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Food Orders</h3>
-                            <p id="totalOrders">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Total Revenue</h3>
-                            <p id="totalRevenue">$0.00</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Rooms Section -->
-            <section id="rooms" class="dashboard-section">
-                <div class="section-header">
-                    <h2>Rooms Management</h2>
-                    <button id="addRoomBtn" class="btn-primary">
-                        <i class="fas fa-plus"></i> Add New Room
-                    </button>
-                </div>
-                <div class="rooms-grid" id="roomsGrid"></div>
-            </section>
-
-            <!-- Food Section -->
-            <section id="food" class="dashboard-section">
-                <div class="section-header">
-                    <h2>Food Menu Management</h2>
-                    <button id="addFoodBtn" class="btn-primary">
-                        <i class="fas fa-plus"></i> Add New Item
-                    </button>
-                </div>
-                <div class="food-items-grid" id="foodItemsGrid"></div>
-            </section>
-
-            <!-- Bookings Section -->
-            <section id="bookings" class="dashboard-section">
-                <div class="section-header">
-                    <h2>Room Bookings</h2>
-                </div>
-                <div class="bookings-list" id="bookingsList"></div>
-            </section>
-
-            <!-- Orders Section -->
-            <section id="orders" class="dashboard-section">
-                <div class="section-header">
-                    <h2>Food Orders</h2>
-                </div>
-                <div class="orders-list" id="ordersList"></div>
-            </section>
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <button id="addRoomBtn" style="padding: 1rem 2rem; background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: inherit; transition: all 0.3s; box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                <i class="fas fa-plus"></i> Add New Room
+            </button>
+            <button id="addFoodBtn" style="padding: 1rem 2rem; background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: inherit; transition: all 0.3s; box-shadow: 0 4px 6px rgba(230, 126, 34, 0.2);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                <i class="fas fa-plus"></i> Add New Food Item
+            </button>
         </div>
-    </div>
 
-    <!-- Add Room Modal -->
-    <div id="addRoomModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add New Room</h2>
-            <form id="addRoomForm">
-                <div class="form-group">
-                    <label for="roomNumber">Room Number</label>
-                    <input type="text" id="roomNumber" required>
-                </div>
-                <div class="form-group">
-                    <label for="roomName">Room Name</label>
-                    <input type="text" id="roomName" required>
-                </div>
-                <div class="form-group">
-                    <label for="roomType">Room Type</label>
-                    <select id="roomType" required>
-                        <option value="Deluxe">Deluxe</option>
-                        <option value="Suite">Suite</option>
-                        <option value="Presidential">Presidential</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="roomPrice">Price per Night ($)</label>
-                    <input type="number" id="roomPrice" min="0" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="roomCapacity">Capacity</label>
-                    <input type="number" id="roomCapacity" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="roomDescription">Description</label>
-                    <textarea id="roomDescription" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="roomAmenities">Amenities</label>
-                    <select id="roomAmenities" multiple required>
-                        <option value="WiFi">WiFi</option>
-                        <option value="TV">TV</option>
-                        <option value="AC">Air Conditioning</option>
-                        <option value="Minibar">Minibar</option>
-                        <option value="Safe">Safe</option>
-                        <option value="Balcony">Balcony</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="roomImageUrls">Room Image URLs (One per line)</label>
-                    <textarea id="roomImageUrls" placeholder="Enter image URLs, one per line" required></textarea>
-                    <small class="help-text">Enter full URLs of images, each on a new line</small>
-                </div>
-                <button type="submit" class="btn-primary">Add Room</button>
-            </form>
+        <!-- Modal Styles -->
+        <style>
+            .modal { background: rgba(0, 0, 0, 0.5); }
+            .modal-content {
+                background: white;
+                padding: 2rem;
+                border-radius: 15px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                padding: 0.8rem;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                transition: all 0.3s;
+            }
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
+                border-color: #3498db;
+                box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            }
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+        </style>
+
+        <!-- Keep existing modal HTML and scripts -->
+        <!-- Add Room Modal -->
+        <div id="addRoomModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add New Room</h2>
+                <form id="addRoomForm">
+                    <div class="form-group">
+                        <label for="roomNumber">Room Number*</label>
+                        <input type="text" id="roomNumber" required placeholder="e.g., 101">
+                    </div>
+                    <div class="form-group">
+                        <label for="roomType">Room Type*</label>
+                        <select id="roomType" required onchange="updateRoomDefaults()">
+                            <option value="">Select Room Type</option>
+                            <option value="Deluxe">Deluxe</option>
+                            <option value="Suite">Suite</option>
+                            <option value="Presidential">Presidential</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="roomName">Room Name*</label>
+                        <input type="text" id="roomName" required placeholder="e.g., Deluxe City View">
+                    </div>
+                    <div class="form-group">
+                        <label for="roomDescription">Description*</label>
+                        <textarea id="roomDescription" required placeholder="Enter room description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="roomPrice">Price per Night ($)*</label>
+                        <input type="number" id="roomPrice" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="roomCapacity">Capacity*</label>
+                        <input type="number" id="roomCapacity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="roomFloor">Floor Number*</label>
+                        <input type="number" id="roomFloor" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="roomAmenities">Amenities</label>
+                        <select id="roomAmenities" multiple>
+                            <option value="WiFi">WiFi</option>
+                            <option value="TV">TV</option>
+                            <option value="Mini Bar">Mini Bar</option>
+                            <option value="Air Conditioning">Air Conditioning</option>
+                            <option value="Safe">Safe</option>
+                            <option value="Balcony">Balcony</option>
+                        </select>
+                        <small>Hold Ctrl/Cmd to select multiple</small>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Room</button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Add Food Modal -->
-    <div id="addFoodModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add New Food Item</h2>
-            <form id="addFoodForm">
-                <div class="form-group">
-                    <label for="foodName">Name</label>
-                    <input type="text" id="foodName" required>
-                </div>
-                <div class="form-group">
-                    <label for="foodCategory">Category</label>
-                    <select id="foodCategory" required>
-                        <option value="breakfast">Breakfast</option>
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="desserts">Desserts</option>
-                        <option value="beverages">Beverages</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="foodPrice">Price ($)</label>
-                    <input type="number" id="foodPrice" min="0" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="foodDescription">Description</label>
-                    <textarea id="foodDescription" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="foodImageUrl">Food Image URL</label>
-                    <input type="url" id="foodImageUrl" placeholder="Enter the image URL" required>
-                    <small class="help-text">Enter the full URL of the food image</small>
-                </div>
-                <button type="submit" class="btn-primary">Add Food Item</button>
-            </form>
+        <!-- Add Food Modal -->
+        <div id="addFoodModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add New Food Item</h2>
+                <form id="addFoodForm">
+                    <div class="form-group">
+                        <label for="foodName">Name</label>
+                        <input type="text" id="foodName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodCategory">Category</label>
+                        <select id="foodCategory" required>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="desserts">Desserts</option>
+                            <option value="beverages">Beverages</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodPrice">Price ($)</label>
+                        <input type="number" id="foodPrice" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodDescription">Description</label>
+                        <textarea id="foodDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodImageUrl">Food Image URL</label>
+                        <input type="url" id="foodImageUrl" placeholder="Enter the image URL" required>
+                        <small class="help-text">Enter the full URL of the food image</small>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Food Item</button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Scripts -->
-    <script src="js/utils.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/admin-dashboard.js"></script>
+        <!-- Scripts -->
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
+        <script src="js/auth.js"></script>
+        <script src="js/admin-dashboard.js"></script>
+    </div>
 </body>
-</html> 
+</html>

@@ -1,102 +1,243 @@
-document.addEventListener('DOMContentLoaded', function() {
+// Add this at the top of the file
+const roomTypeImages = {
+    'Deluxe': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304',
+    'Suite': 'https://images.unsplash.com/photo-1595576508898-0ad5c879a061',
+    'Presidential': 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b'
+};
+
+const roomDefaults = {
+    'Deluxe': {
+        image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304',
+        basePrice: 200,
+        baseCapacity: 2,
+        description: 'Luxurious Deluxe room with modern amenities'
+    },
+    'Suite': {
+        image: 'https://images.unsplash.com/photo-1595576508898-0ad5c879a061',
+        basePrice: 350,
+        baseCapacity: 3,
+        description: 'Spacious Suite with separate living area'
+    },
+    'Presidential': {
+        image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b',
+        basePrice: 500,
+        baseCapacity: 4,
+        description: 'Luxurious Presidential Suite with premium amenities'
+    }
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
     // Check if user is admin
-    checkAdminAccess();
-    
-    // Initialize dashboard
-    initializeDashboard();
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'admin') {
+        window.location.href = '/login.html';
+        return;
+    }
+
+    // Load dashboard stats
+    await loadDashboardStats();
     
     // Setup event listeners
     setupEventListeners();
 });
 
-// Check admin access
-function checkAdminAccess() {
-    const token = sessionStorage.getItem('userToken') || localStorage.getItem('token');
-    const userData = JSON.parse(sessionStorage.getItem('userData') || localStorage.getItem('userData') || '{}');
-    
-    if (!token || userData.role !== 'admin') {
-        window.location.href = 'login.html';
-        return;
-    }
-}
-
-// Initialize dashboard
-async function initializeDashboard() {
+async function loadDashboardStats() {
     try {
-        // Load overview data
-        await loadOverviewData();
+        const response = await fetch('http://localhost:5000/api/admin/dashboard-stats', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch stats');
         
-        // Load initial data based on current section
-        const currentSection = window.location.hash.slice(1) || 'overview';
-        await loadSectionData(currentSection);
+        const data = await response.json();
         
-        // Show current section
-        showSection(currentSection);
+        // Update dashboard stats with animation
+        animateCounter('totalBookings', data.totalBookings);
+        animateCounter('totalOrders', data.totalOrders);
+        animateCounter('totalRevenue', data.totalRevenue, true);
     } catch (error) {
-        console.error('Error initializing dashboard:', error);
-        showToast('Failed to initialize dashboard', 'error');
-    }
-}
-
-// Load overview data
-async function loadOverviewData() {
-    try {
-        const [bookingsResponse, ordersResponse] = await Promise.all([
-            fetch('http://localhost:5000/api/admin/bookings/stats', {
-                headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('userToken') || localStorage.getItem('token')}`
-                }
-            }),
-            fetch('http://localhost:5000/api/admin/food-orders/stats', {
-                headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('userToken') || localStorage.getItem('token')}`
-                }
-            })
-        ]);
-
-        if (!bookingsResponse.ok || !ordersResponse.ok) 
-            throw new Error('Failed to load dashboard stats');
-
-        const bookingsData = await bookingsResponse.json();
-        const ordersData = await ordersResponse.json();
-
-        // Calculate total revenue
-        const totalRevenue = bookingsData.totalRevenue + ordersData.totalRevenue;
-
-        // Update stats with animations
-        animateCounter('totalBookings', bookingsData.totalBookings);
-        animateCounter('totalOrders', ordersData.totalOrders);
-        animateCounter('totalRevenue', totalRevenue, true);
-    } catch (error) {
-        console.error('Error loading dashboard stats:', error);
+        console.error('Error loading stats:', error);
         showNotification('Failed to load dashboard statistics', 'error');
     }
 }
 
-// Animate counter for better UX
+function setupEventListeners() {
+    // Room Modal
+    const addRoomBtn = document.getElementById('addRoomBtn');
+    const addRoomModal = document.getElementById('addRoomModal');
+    const addRoomForm = document.getElementById('addRoomForm');
+    
+    addRoomBtn.onclick = () => addRoomModal.style.display = 'block';
+    
+    // Food Modal
+    const addFoodBtn = document.getElementById('addFoodBtn');
+    const addFoodModal = document.getElementById('addFoodModal');
+    const addFoodForm = document.getElementById('addFoodForm');
+    
+    addFoodBtn.onclick = () => addFoodModal.style.display = 'block';
+        
+    // Close Modals
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.onclick = function() {
+            this.closest('.modal').style.display = 'none';
+        }
+    });
+
+    // Handle form submissions
+    addRoomForm.onsubmit = handleAddRoom;
+    addFoodForm.onsubmit = handleAddFood;
+}
+
+// Toast notification function
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 100);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Update the handleAddRoom function
+async function handleAddRoom(e) {
+    e.preventDefault();
+    
+    const roomType = document.getElementById('roomType').value;
+    
+    // Create room data object matching the backend expectations
+    const roomData = {
+        number: document.getElementById('roomNumber').value,
+        type: roomType,
+        name: document.getElementById('roomName').value,
+        description: document.getElementById('roomDescription').value,
+        price: parseFloat(document.getElementById('roomPrice').value),
+        capacity: parseInt(document.getElementById('roomCapacity').value),
+        floor: parseInt(document.getElementById('roomFloor').value),
+        amenities: Array.from(document.getElementById('roomAmenities').selectedOptions).map(opt => opt.value),
+        images: [roomDefaults[roomType].image],
+        status: 'AVAILABLE'
+    };
+
+    // Validate required fields before sending
+    const requiredFields = ['number', 'type', 'name', 'price', 'capacity', 'floor'];
+    const missingFields = requiredFields.filter(field => !roomData[field]);
+    
+    if (missingFields.length > 0) {
+        showToast(`Missing required fields: ${missingFields.join(', ')}`, 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:5000/api/admin/rooms', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(roomData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to add room');
+        }
+
+        showToast('Room added successfully', 'success');
+        document.getElementById('addRoomModal').style.display = 'none';
+        document.getElementById('addRoomForm').reset();
+        await loadDashboardStats();
+        await loadRooms(); // Refresh the rooms list
+    } catch (error) {
+        console.error('Error adding room:', error);
+        showToast(error.message, 'error');
+    }
+}
+
+// Update the handleAddFood function
+async function handleAddFood(e) {
+    e.preventDefault();
+    
+    const foodData = {
+        name: document.getElementById('foodName').value,
+        category: document.getElementById('foodCategory').value,
+        price: parseFloat(document.getElementById('foodPrice').value),
+        description: document.getElementById('foodDescription').value,
+        imageUrl: document.getElementById('foodImageUrl').value || 
+                 `https://source.unsplash.com/800x600/?${encodeURIComponent(document.getElementById('foodName').value)}+food`
+    };
+
+    try {
+        const response = await fetch('http://localhost:5000/api/admin/food', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(foodData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to add food item');
+        }
+
+        showToast('Food item added successfully');
+        document.getElementById('addFoodModal').style.display = 'none';
+        document.getElementById('addFoodForm').reset();
+        await loadDashboardStats();
+    } catch (error) {
+        console.error('Error adding food item:', error);
+        showToast(error.message, 'error');
+    }
+}
+
 function animateCounter(elementId, finalValue, isCurrency = false) {
     const element = document.getElementById(elementId);
-    const duration = 1000; // Animation duration in milliseconds
-    const start = parseInt(element.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+    const duration = 1000;
+    const start = parseInt(element.innerText.replace(/[^0-9]/g, '')) || 0;
     const increment = (finalValue - start) / (duration / 16);
     let current = start;
-    
+
     const animate = () => {
         current += increment;
-        if ((increment > 0 && current >= finalValue) || (increment < 0 && current <= finalValue)) {
+        if ((increment > 0 && current >= finalValue) || 
+            (increment < 0 && current <= finalValue)) {
             current = finalValue;
         }
         
-        element.textContent = isCurrency 
-            ? `$${current.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
-            : Math.round(current).toString();
-            
+        element.innerText = isCurrency ? 
+            `$${Math.round(current).toLocaleString()}` : 
+            Math.round(current).toLocaleString();
+
         if (current !== finalValue) {
             requestAnimationFrame(animate);
         }
     };
-    
+
     animate();
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+       
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
 }
 
 // Load section data
@@ -117,97 +258,41 @@ async function loadSectionData(section) {
     }
 }
 
-// Setup event listeners
-function setupEventListeners() {
-    // Sidebar navigation
-    document.querySelectorAll('.sidebar-menu a')?.forEach(link => {
-        link?.addEventListener('click', async function(e) {
-            e.preventDefault();
-            const section = this.getAttribute('data-section');
-            
-            // Update URL hash
-            window.location.hash = section;
-            
-            // Load section data
-            await loadSectionData(section);
-            
-            // Show section
-            showSection(section);
+// Image preview for room images
+const roomImagesInput = document.getElementById('roomImages');
+const roomImagesPreview = document.getElementById('roomImagesPreview');
+if (roomImagesInput && roomImagesPreview) {
+    roomImagesInput.addEventListener('change', function() {
+        roomImagesPreview.innerHTML = '';
+        [...this.files].forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                roomImagesPreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
         });
     });
-    
-    // Add room button
-    const addRoomBtn = document.getElementById('addRoomBtn');
-    const addRoomModal = document.getElementById('addRoomModal');
-    if (addRoomBtn && addRoomModal) {
-        addRoomBtn.addEventListener('click', () => {
-            addRoomModal.style.display = 'block';
-        });
-    }
-    
-    // Add food button
-    const addFoodBtn = document.getElementById('addFoodBtn');
-    const addFoodModal = document.getElementById('addFoodModal');
-    if (addFoodBtn && addFoodModal) {
-        addFoodBtn.addEventListener('click', () => {
-            addFoodModal.style.display = 'block';
-        });
-    }
-    
-    // Close modals
-    document.querySelectorAll('.close')?.forEach(closeBtn => {
-        closeBtn?.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
+}
+
+// Image preview for food image
+const foodImageInput = document.getElementById('foodImage');
+const foodImagePreview = document.getElementById('foodImagePreview');
+if (foodImageInput && foodImagePreview) {
+    foodImageInput.addEventListener('change', function() {
+        foodImagePreview.innerHTML = '';
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                foodImagePreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
     });
-    
-    // Form submissions
-    const addRoomForm = document.getElementById('addRoomForm');
-    if (addRoomForm) {
-        addRoomForm.addEventListener('submit', handleAddRoom);
-    }
-    
-    const addFoodForm = document.getElementById('addFoodForm');
-    if (addFoodForm) {
-        addFoodForm.addEventListener('submit', handleAddFood);
-    }
-
-    // Image preview for room images
-    const roomImagesInput = document.getElementById('roomImages');
-    const roomImagesPreview = document.getElementById('roomImagesPreview');
-    if (roomImagesInput && roomImagesPreview) {
-        roomImagesInput.addEventListener('change', function() {
-            roomImagesPreview.innerHTML = '';
-            [...this.files].forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    roomImagesPreview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-    }
-
-    // Image preview for food image
-    const foodImageInput = document.getElementById('foodImage');
-    const foodImagePreview = document.getElementById('foodImagePreview');
-    if (foodImageInput && foodImagePreview) {
-        foodImageInput.addEventListener('change', function() {
-            foodImagePreview.innerHTML = '';
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    foodImagePreview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
 }
 
 // Show selected section
@@ -216,10 +301,10 @@ function showSection(sectionId) {
     document.querySelectorAll('.dashboard-section').forEach(section => {
         section.classList.remove('active');
     });
-    
+
     // Show selected section
     document.getElementById(sectionId).classList.add('active');
-    
+
     // Update sidebar active state
     document.querySelectorAll('.sidebar-menu a').forEach(link => {
         link.classList.remove('active');
@@ -239,7 +324,7 @@ function showToast(message, type = 'error') {
     
     // Trigger animation
     setTimeout(() => toast.classList.add('show'), 10);
-    
+       
     // Remove after 3 seconds
     setTimeout(() => {
         toast.classList.remove('show');
@@ -247,135 +332,32 @@ function showToast(message, type = 'error') {
     }, 3000);
 }
 
-// Handle adding new room
-async function handleAddRoom(e) {
-    e.preventDefault();
-    
-    try {
-        const roomNumber = document.getElementById('roomNumber').value.trim();
-        
-        // Check if room number exists
-        const checkResponse = await fetch(`http://localhost:5000/api/admin/rooms/check/${roomNumber}`, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('userToken') || localStorage.getItem('token')}`
-            }
-        });
-        
-        const checkData = await checkResponse.json();
-        
-        if (checkData.exists) {
-            throw new Error('Room number already exists');
-        }
-        
-        const roomData = {
-            number: roomNumber,
-            type: document.getElementById('roomType').value,
-            name: document.getElementById('roomName').value.trim(),
-            price: parseFloat(document.getElementById('roomPrice').value),
-            capacity: parseInt(document.getElementById('roomCapacity').value),
-            description: document.getElementById('roomDescription').value.trim(),
-            amenities: Array.from(document.getElementById('roomAmenities').selectedOptions)
-                .map(option => option.value),
-            images: document.getElementById('roomImageUrls').value
-                .split('\n')
-                .map(url => url.trim())
-                .filter(url => url.length > 0)
-        };
-
-        // Validate required fields
-        if (!roomData.number) throw new Error('Room number is required');
-        if (!roomData.name) throw new Error('Room name is required');
-        if (!roomData.description) throw new Error('Room description is required');
-        if (!roomData.price || roomData.price <= 0) throw new Error('Valid price is required');
-        if (!roomData.capacity || roomData.capacity <= 0) throw new Error('Valid capacity is required');
-        if (roomData.images.length === 0) throw new Error('At least one image URL is required');
-        if (roomData.amenities.length === 0) throw new Error('At least one amenity must be selected');
-        
-        const response = await fetch('http://localhost:5000/api/admin/rooms', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sessionStorage.getItem('userToken') || localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(roomData)
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.message || 'Failed to add room');
-        }
-        
-        showToast('Room added successfully', 'success');
-        document.getElementById('addRoomModal').style.display = 'none';
-        document.getElementById('addRoomForm').reset();
-        await loadRooms();
-    } catch (error) {
-        console.error('Error adding room:', error);
-        showToast(error.message || 'Failed to add room');
-    }
-}
-
-// Handle adding new food item
-async function handleAddFood(e) {
-    e.preventDefault();
-    
-    try {
-        const foodData = {
-            name: document.getElementById('foodName').value.trim(),
-            category: document.getElementById('foodCategory').value,
-            price: parseFloat(document.getElementById('foodPrice').value),
-            description: document.getElementById('foodDescription').value.trim(),
-            image: document.getElementById('foodImageUrl').value.trim()
-        };
-
-        // Validate required fields
-        if (!foodData.name) throw new Error('Food name is required');
-        if (!foodData.description) throw new Error('Food description is required');
-        if (!foodData.price || foodData.price <= 0) throw new Error('Valid price is required');
-        if (!foodData.image) throw new Error('Food image URL is required');
-        
-        const response = await fetch('http://localhost:5000/api/admin/food', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sessionStorage.getItem('userToken') || localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(foodData)
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.message || 'Failed to add food item');
-        }
-        
-        showToast('Food item added successfully', 'success');
-        document.getElementById('addFoodModal').style.display = 'none';
-        document.getElementById('addFoodForm').reset();
-        await loadFoodItems();
-    } catch (error) {
-        console.error('Error adding food item:', error);
-        showToast(error.message || 'Failed to add food item');
-    }
-}
-
-// Load rooms
+// Update the loadRooms function
 async function loadRooms() {
     try {
+        const token = sessionStorage.getItem('userToken') || localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+
         const response = await fetch('http://localhost:5000/api/admin/rooms', {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('userToken') || localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         });
         
-        if (!response.ok) throw new Error('Failed to load rooms');
-        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to load rooms');
+        }
+           
         const rooms = await response.json();
         renderRooms(rooms);
+        showToast('Rooms loaded successfully', 'success');
     } catch (error) {
         console.error('Error loading rooms:', error);
-        showNotification('Failed to load rooms', 'error');
+        showToast(error.message || 'Failed to load rooms', 'error');
     }
 }
 
@@ -389,7 +371,7 @@ async function loadFoodItems() {
         });
         
         if (!response.ok) throw new Error('Failed to load food items');
-        
+           
         const foodItems = await response.json();
         renderFoodItems(foodItems);
     } catch (error) {
@@ -408,7 +390,7 @@ async function loadBookings() {
         });
         
         if (!response.ok) throw new Error('Failed to load bookings');
-        
+           
         const bookings = await response.json();
         renderBookings(bookings);
     } catch (error) {
@@ -427,7 +409,7 @@ async function loadOrders() {
         });
         
         if (!response.ok) throw new Error('Failed to load orders');
-        
+           
         const orders = await response.json();
         renderOrders(orders);
     } catch (error) {
@@ -533,4 +515,44 @@ function renderFoodItems(items) {
             </div>
         </div>
     `).join('');
-} 
+}
+
+function updateRoomDefaults() {
+    const roomType = document.getElementById('roomType').value;
+    const defaults = roomDefaults[roomType];
+    
+    if (defaults) {
+        document.getElementById('roomPrice').value = defaults.basePrice;
+        document.getElementById('roomCapacity').value = defaults.baseCapacity;
+        document.getElementById('roomDescription').value = defaults.description;
+        document.getElementById('roomName').value = `${roomType} Room`;
+    }
+}
+
+// Add toast notification styles
+const toastStyles = `
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+    }
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .toast.success { background: #2ecc71; }
+    .toast.error { background: #e74c3c; }
+`;
+
+// Add styles to document
+const styleSheet = document.createElement('style');
+styleSheet.textContent = toastStyles;
+document.head.appendChild(styleSheet);

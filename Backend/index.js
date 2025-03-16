@@ -39,7 +39,9 @@ app.use('/api/contact', require('./routes/contact'));  // Make sure this file ex
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
+    res.status(500).json({ 
+        message: err.message || 'Something went wrong!'
+    });
 });
 
 // Health check route
