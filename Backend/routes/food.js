@@ -211,29 +211,29 @@ router.post('/', auth, adminOnly, async (req, res) => {
             description, 
             price, 
             category, 
-            image, 
-            isVegetarian, 
-            preparationTime,
-            spicyLevel,
-            isAvailable
+            isVeg 
         } = req.body;
+
+        // Validate required fields
+        if (!name || !description || !price || !category) {
+            return res.status(400).json({ 
+                message: 'Please provide all required fields: name, description, price, category' 
+            });
+        }
 
         const food = new Food({
             name,
             description,
             price,
             category,
-            image,
-            isVegetarian: isVegetarian || false,
-            preparationTime: preparationTime || 20,
-            spicyLevel: spicyLevel || 'Medium',
-            isAvailable: isAvailable !== undefined ? isAvailable : true
+            isVeg: isVeg || false,
+            // Default image will be set automatically from schema
         });
 
         await food.save();
         res.status(201).json(food);
     } catch (error) {
-        console.error(error);
+        console.error('Error adding food item:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
@@ -324,4 +324,4 @@ router.get('/health', async (req, res) => {
     }
 });
 
-module.exports = router; 
+module.exports = router;

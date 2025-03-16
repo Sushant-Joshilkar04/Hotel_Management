@@ -12,61 +12,23 @@ const foodSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
-        min: [0, 'Price cannot be negative']
+        min: 0
     },
     category: {
         type: String,
-        enum: ['Starters', 'Main Course', 'Desserts', 'Beverages'],
-        required: true
+        required: true,
+        enum: ['Breakfast', 'Lunch', 'Dinner', 'Desserts']
     },
-    image: {
-        type: String,
-        required: true
-    },
-    isVegetarian: {
+    isVeg: {
         type: Boolean,
         default: false
     },
-    preparationTime: {
-        type: Number, 
-        default: 20
-    },
-    isAvailable: {
-        type: Boolean,
-        default: true
-    },
-    spicyLevel: {
+    image: {
         type: String,
-        enum: ['Mild', 'Medium', 'Hot'],
-        default: 'Medium'
-    },
-    reviews: [{
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        },
-        rating: {
-            type: Number,
-            required: true,
-            min: 1,
-            max: 5
-        },
-        comment: String
-    }],
-    averageRating: {
-        type: Number,
-        default: 0
+        default: 'https://cdn.vectorstock.com/i/1000x1000/90/77/plate-fork-and-spoon-on-white-background-vector-20419077.webp'
     }
-}, { timestamps: true });
-
-// Calculate average rating before saving
-foodSchema.pre('save', function(next) {
-    if (this.reviews.length > 0) {
-        this.averageRating = parseFloat(
-            (this.reviews.reduce((acc, review) => acc + review.rating, 0) / this.reviews.length).toFixed(1)
-        );
-    }
-    next();
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model('Food', foodSchema);

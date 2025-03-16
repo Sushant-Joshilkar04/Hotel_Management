@@ -254,23 +254,39 @@ router.post('/rooms', auth, adminOnly, async (req, res) => {
     }
 });
 
-// Add new food item
+// Add new food item route
 router.post('/food', auth, adminOnly, async (req, res) => {
     try {
-        const { name, category, price, description } = req.body;
+        const { name, description, price, category, isVeg } = req.body;
         
+        // Validate required fields
+        if (!name || !description || !price || !category) {
+            return res.status(400).json({ 
+                message: 'Please provide all required fields: name, description, price, category' 
+            });
+        }
+
+        // Create new food item
         const food = new Food({
             name,
+            description,
+            price: parseFloat(price),
             category,
-            price,
-            description
+            isVeg: isVeg === 'true' || isVeg === true,
+            // Default image is set by the schema
         });
+
+        const savedFood = await food.save();
         
-        await foods.save();
-        res.status(201).json(food);
+        res.status(201).json({ 
+            message: 'Food item added successfully',
+            food: savedFood 
+        });
     } catch (error) {
         console.error('Error adding food item:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ 
+            message: error.message || 'Error adding food item' 
+        });
     }
 });
 

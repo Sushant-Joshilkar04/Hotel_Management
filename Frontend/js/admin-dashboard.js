@@ -167,14 +167,23 @@ async function handleAddRoom(e) {
 async function handleAddFood(e) {
     e.preventDefault();
     
+    // Get form values
     const foodData = {
-        name: document.getElementById('foodName').value,
-        category: document.getElementById('foodCategory').value,
+        name: document.getElementById('foodName').value.trim(),
+        description: document.getElementById('foodDescription').value.trim(),
         price: parseFloat(document.getElementById('foodPrice').value),
-        description: document.getElementById('foodDescription').value,
-        imageUrl: document.getElementById('foodImageUrl').value || 
-                 `https://source.unsplash.com/800x600/?${encodeURIComponent(document.getElementById('foodName').value)}+food`
+        category: document.getElementById('foodCategory').value,
+        isVeg: document.getElementById('isVeg').value === 'true'
     };
+
+    // Validate required fields
+    const requiredFields = ['name', 'description', 'price', 'category'];
+    const missingFields = requiredFields.filter(field => !foodData[field]);
+    
+    if (missingFields.length > 0) {
+        showToast(`Missing required fields: ${missingFields.join(', ')}`, 'error');
+        return;
+    }
 
     try {
         const response = await fetch('http://localhost:5000/api/admin/food', {
@@ -192,15 +201,20 @@ async function handleAddFood(e) {
             throw new Error(data.message || 'Failed to add food item');
         }
 
-        showToast('Food item added successfully');
+        showToast('Food item added successfully', 'success');
         document.getElementById('addFoodModal').style.display = 'none';
         document.getElementById('addFoodForm').reset();
-        await loadDashboardStats();
+        
+        // Optionally refresh the food items list if you have one
+        // await loadFoodItems();
     } catch (error) {
         console.error('Error adding food item:', error);
         showToast(error.message, 'error');
     }
 }
+
+// Add event listener to the form
+document.getElementById('addFoodForm').addEventListener('submit', handleAddFood);
 
 function animateCounter(elementId, finalValue, isCurrency = false) {
     const element = document.getElementById(elementId);

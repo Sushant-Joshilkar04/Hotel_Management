@@ -157,31 +157,33 @@
                 <h2>Add New Food Item</h2>
                 <form id="addFoodForm">
                     <div class="form-group">
-                        <label for="foodName">Name</label>
+                        <label for="foodName">Name*</label>
                         <input type="text" id="foodName" required>
                     </div>
                     <div class="form-group">
-                        <label for="foodCategory">Category</label>
+                        <label for="foodCategory">Category*</label>
                         <select id="foodCategory" required>
-                            <option value="breakfast">Breakfast</option>
-                            <option value="lunch">Lunch</option>
-                            <option value="dinner">Dinner</option>
-                            <option value="desserts">Desserts</option>
-                            <option value="beverages">Beverages</option>
+                            <option value="">Select Category</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Desserts">Desserts</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="foodPrice">Price ($)</label>
+                        <label for="foodPrice">Price ($)*</label>
                         <input type="number" id="foodPrice" min="0" step="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label for="foodDescription">Description</label>
+                        <label for="foodDescription">Description*</label>
                         <textarea id="foodDescription" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="foodImageUrl">Food Image URL</label>
-                        <input type="url" id="foodImageUrl" placeholder="Enter the image URL" required>
-                        <small class="help-text">Enter the full URL of the food image</small>
+                        <label for="isVeg">Is Vegetarian?</label>
+                        <select id="isVeg" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn-primary">Add Food Item</button>
                 </form>
